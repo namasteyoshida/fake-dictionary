@@ -1,0 +1,454 @@
+/* ============================================================
+   Fake Dictionary — デザイントークン
+   世界観: 図書館の目録カード(インデックスカード) + 偽造書類の検認スタンプ
+   ============================================================ */
+:root {
+  --paper: #ede3cf;         /* 目録カードの紙色 */
+  --paper-dark: #e0d3b3;    /* カードの縁・区切り線の紙色 */
+  --paper-shadow: #cfc09a;  /* カードの落ち影 */
+  --ink: #24313d;           /* 本文インク */
+  --ink-soft: #5b6b76;      /* 補足テキスト */
+  --brass: #a6763d;         /* 罫線・カード枠のアクセント */
+  --stamp-red: #b23a2e;     /* FAKE / 不正解 */
+  --stamp-green: #2f6f5e;   /* REAL / 正解 */
+
+  --font-body: 'Lora', 'Hiragino Mincho ProN', serif;
+  --font-stamp: 'Special Elite', 'Courier New', monospace;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper-dark);
+  /* ざらついた紙の質感を淡いノイズ的グラデーションで表現 */
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(166, 118, 61, 0.08), transparent 40%),
+    radial-gradient(circle at 80% 90%, rgba(36, 49, 61, 0.06), transparent 45%);
+}
+
+/* ============================================================
+   ページレイアウト = 一枚の目録カード
+   ============================================================ */
+.page-layout {
+  max-width: 460px;
+  margin: 32px auto;
+  padding: 0;
+  background: var(--paper);
+  border: 1px solid var(--brass);
+  border-radius: 4px;
+  box-shadow: 0 2px 0 var(--paper-shadow), 0 18px 32px -20px rgba(36, 49, 61, 0.45);
+  position: relative;
+}
+
+/* カード上部の「パンチ穴」2つ(目録カードらしさの記号) */
+.page-layout::before,
+.page-layout::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--paper-dark);
+  box-shadow: inset 0 1px 2px rgba(36, 49, 61, 0.4);
+}
+.page-layout::before {
+  left: 20px;
+}
+.page-layout::after {
+  right: 20px;
+}
+
+.page-title {
+  font-family: var(--font-stamp);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: var(--ink);
+  margin: 0;
+  padding: 40px 24px 16px;
+  border-bottom: 1px dashed var(--brass);
+}
+
+.page-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-content > p {
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ============================================================
+   ボタン
+   ============================================================ */
+.btn {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 3px;
+  border: 1px solid var(--ink);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--brass);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--brass);
+}
+
+/* ============================================================
+   バトル画面のカード(手札)
+   ============================================================ */
+.battle-page__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.battle-card {
+  font-family: var(--font-body);
+  text-align: left;
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--paper-shadow);
+  border-left: 4px solid var(--brass);
+  border-radius: 2px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.battle-card:hover:not(:disabled) {
+  border-left-color: var(--ink);
+}
+
+.battle-card--selected {
+  border-left-color: var(--stamp-green);
+  box-shadow: 0 0 0 1px var(--stamp-green);
+}
+
+.battle-card--disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.battle-card__word {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+
+.battle-card__meaning {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* ============================================================
+   回答画面のカード(見開きの辞書ページ風)
+   ============================================================ */
+.guess-card {
+  background: #fff;
+  border: 1px solid var(--paper-shadow);
+  border-radius: 2px;
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.guess-card__word {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.guess-card__meaning {
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.guess-page__buttons {
+  display: flex;
+  gap: 12px;
+}
+.guess-page__buttons .btn {
+  flex: 1;
+}
+
+/* ============================================================
+   検認スタンプ(このデザインの署名要素)
+   ============================================================ */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-stamp);
+  font-size: 26px;
+  letter-spacing: 0.08em;
+  padding: 10px 22px;
+  border: 3px solid currentColor;
+  border-radius: 6px;
+  transform: rotate(-6deg);
+  animation: stamp-down 0.35s ease-out;
+}
+
+.stamp--real {
+  color: var(--stamp-green);
+}
+.stamp--fake {
+  color: var(--stamp-red);
+}
+
+@keyframes stamp-down {
+  0% {
+    opacity: 0;
+    transform: rotate(-6deg) scale(1.8);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(-6deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   その他の画面固有スタイル
+   ============================================================ */
+.room-id-code {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 6px 12px;
+  border: 1px dashed var(--brass);
+  border-radius: 2px;
+  color: var(--ink);
+}
+
+.title-page__room-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--paper-shadow);
+}
+
+.title-page__join {
+  display: flex;
+  gap: 8px;
+}
+
+.title-page__join input {
+  flex: 1;
+}
+
+input {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--paper-shadow);
+  border-radius: 2px;
+  background: #fff;
+  color: var(--ink);
+}
+
+input:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 1px;
+}
+
+.matching-page__spinner,
+.waiting-page__spinner {
+  width: 28px;
+  height: 28px;
+  margin: 12px auto 0;
+  border: 3px solid var(--paper-shadow);
+  border-top-color: var(--brass);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .matching-page__spinner,
+  .waiting-page__spinner {
+    animation: none;
+  }
+}
+
+.meaning-input__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.meaning-input__row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meaning-input__row label {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.meaning-input__error {
+  color: var(--stamp-red);
+  font-size: 13px;
+  margin: 0;
+}
+
+.result-page__winner {
+  font-family: var(--font-stamp);
+  font-size: 24px;
+  text-align: center;
+  color: var(--ink);
+}
+
+.score-row {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+/* モバイル幅での余白調整 */
+@media (max-width: 500px) {
+  .page-layout {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+/* ============================================================
+   ダイアログモーダル
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(36, 49, 61, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-card {
+  background: var(--paper);
+  border: 2px solid var(--brass);
+  border-radius: 4px;
+  padding: 28px 24px 20px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  animation: popUp 0.25s ease-out;
+}
+
+.modal-card__stamp {
+  font-family: var(--font-stamp);
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  color: var(--stamp-red);
+  border: 2px solid var(--stamp-red);
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 3px;
+  transform: rotate(-4deg);
+  margin-bottom: 12px;
+}
+
+.modal-card__title {
+  font-family: var(--font-body);
+  font-size: 20px;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.modal-card__message {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.modal-card__btn {
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popUp {
+  from { opacity: 0; transform: scale(0.92) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+

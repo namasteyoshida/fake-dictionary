@@ -1,0 +1,24 @@
+{
+  "name": "fake-dictionary",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+
+  // プロジェクトフォルダ全体(client/server両方)をコンテナ内にマウントする
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+
+  // コンテナ作成後、自動でpnpm installを実行
+  "postCreateCommand": "pnpm install",
+
+  // サーバー(3001)とクライアント(5173)のポートを自動転送する
+  "forwardPorts": [3001, 5173],
+  "portsAttributes": {
+    "3001": { "label": "server" },
+    "5173": { "label": "client" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  }
+}

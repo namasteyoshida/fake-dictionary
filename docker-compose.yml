@@ -1,0 +1,31 @@
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./server:/app       # ホスト側のソースコードをコンテナに反映(編集がすぐ反映される)
+      - server_node_modules:/app/node_modules   # node_modulesはコンテナ内のものを使う(ホストに無いため)
+    env_file:
+      - path: ./server/.env   # server/.env.example をコピーして server/.env を作成しておく(ANTHROPIC_API_KEYなど)
+        required: false       # .envが無くても起動できるようにする(未設定時はフォールバックの偽単語リストが使われる)
+    environment:
+      - CLIENT_ORIGIN=http://localhost:5173
+
+  client:
+    build:
+      context: ./client
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - client_node_modules:/app/node_modules
+    environment:
+      - VITE_SERVER_URL=http://localhost:3001
+    depends_on:
+      - server
+
+volumes:
+  server_node_modules:
+  client_node_modules:
